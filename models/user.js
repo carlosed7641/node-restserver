@@ -1,4 +1,4 @@
-import { Schema, model} from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 const UserSchema = Schema({
     name: {
@@ -20,7 +20,7 @@ const UserSchema = Schema({
     role: {
         type: String,
         required: true,
-        enum: ['ADMIN_ROLE', 'USER_ROLE']
+        //enum: ['ADMIN_ROLE', 'USER_ROLE']
     },
     state: {
         type: Boolean,
