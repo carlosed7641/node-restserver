@@ -16,13 +16,22 @@ export const usersGet = (req, res = response) => {
     })
 }
 
-export const usersPut = (req, res = response) => {
+export const usersPut = async (req, res = response) => {
 
     const { id } = req.params
+    const { _id, password, google, email, ...rest } = req.body
+
+    // TODO validar contra base de datos
+    if (password) {
+        // Encriptar la contraseña
+        const salt = bcrypt.genSaltSync()
+        rest.password = bcrypt.hashSync(password, salt)
+    }
+
+    const user = await User.findByIdAndUpdate(id, rest)
 
     res.json({
-        msg: 'put API',
-        id
+        user
     })
 }
 
@@ -31,17 +40,6 @@ export const usersPost = async (req, res = response) => {
 
     const { name, email, password, role } = req.body
     const user = new User({ name, email, password, role })
-
-    // Verificar si el correo existe
-    const existEmail = await User.findOne({ email })
-
-
-    if (existEmail) {
-        return res.status(400).json({
-            msg: 'El correo ya está registrado'
-        })
-    }
-
 
     // Encriptar la contraseña
     const salt = bcrypt.genSaltSync()
