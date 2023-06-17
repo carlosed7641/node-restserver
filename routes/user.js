@@ -7,7 +7,6 @@ import { existUserById, isEmailValid, isRoleValid } from '../helpers/db-validato
 
 export const router = Router()
 
-
 router.get('/', usersGet)
 
 router.put('/:id', [
@@ -28,6 +27,9 @@ router.post('/', [
 ],
 usersPost)
 
-router.delete('/', usersDelete)
+router.delete('/:id', [
+    check('id', 'No es un ID válido').isMongoId(),
+    check('id').custom(existUserById),
+], usersDelete)
 
 router.patch('/', usersPatch)

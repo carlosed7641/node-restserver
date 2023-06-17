@@ -2,17 +2,22 @@ import { response } from 'express'
 import User from '../models/user.js'
 import bcrypt from 'bcryptjs'
 
-export const usersGet = (req, res = response) => {
+export const usersGet = async (req, res = response) => {
 
-    const { q, name = 'No name', apikey, page = 1, limit = 10 } = req.query
+    const { limit = 5, from = 0 } = req.query
+    const query = { state: true }
+
+    const [ total, users ] =  await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+        .skip(Number(from))
+        .limit(Number(limit))
+    ])
+    
 
     res.json({
-        msg: 'get API',
-        q,
-        name,
-        apikey,
-        page,
-        limit
+        total,
+        users
     })
 }
 
@@ -30,9 +35,7 @@ export const usersPut = async (req, res = response) => {
 
     const user = await User.findByIdAndUpdate(id, rest)
 
-    res.json({
-        user
-    })
+    res.json(user)
 }
 
 
@@ -54,14 +57,16 @@ export const usersPost = async (req, res = response) => {
 }
 
 
-export const usersDelete = (req, res = response) => {
-    res.json({
-        msg: 'delete API'
-    })
+export const usersDelete = async(req, res = response) => {
+
+    const { id } = req.params
+
+    // Fisicamente lo borramos
+    //const user = await User.findByIdAndDelete(id)
+
+    const user = await User.findByIdAndUpdate(id, { state: false })
+
+    res.json(user)
 }
 
-export const usersPatch = (req, res = response) => {
-    res.json({
-        msg: 'patch API'
-    })
-}
+export const usersPatch = async(req, res = response) => {}
