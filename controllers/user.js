@@ -65,8 +65,9 @@ export const usersDelete = async(req, res = response) => {
     //const user = await User.findByIdAndDelete(id)
 
     const user = await User.findByIdAndUpdate(id, { state: false })
+    const userAuth = req.user
 
-    res.json(user)
+    res.json({user, userAuth})
 }
 
 export const usersPatch = async(req, res = response) => {}

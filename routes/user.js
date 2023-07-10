@@ -1,9 +1,8 @@
 import { Router } from 'express'
-import { usersDelete, usersGet, usersPatch, usersPost, usersPut } from '../controllers/user.js'
 import { check } from 'express-validator'
-import { validateFields } from '../middlewares/validate-fields.js'
+import { usersDelete, usersGet, usersPatch, usersPost, usersPut } from '../controllers/user.js'
 import { existUserById, isEmailValid, isRoleValid } from '../helpers/db-validators.js'
-
+import { haveRole, validateFields, validateJWT } from '../middlewares/index.js'
 
 export const router = Router()
 
@@ -28,6 +27,9 @@ router.post('/', [
 usersPost)
 
 router.delete('/:id', [
+    validateJWT,
+    //isAdminRole,
+    haveRole('ADMIN_ROLE', 'SALES_ROLE'),
     check('id', 'No es un ID válido').isMongoId(),
     check('id').custom(existUserById),
 ], usersDelete)
